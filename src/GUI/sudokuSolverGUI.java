@@ -2,6 +2,7 @@ package GUI;
 
 import javafx.application.Application;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
@@ -59,6 +60,14 @@ public class sudokuSolverGUI extends Application {
         clear.setFont(Font.font(20));
 
         buttonsContainer.getChildren().addAll(solve, clear);
+
+        //set button actions
+        clear.setOnAction(x -> {
+            for (Node t : sudukoGrid.getChildren()) {
+                ((OneNumberTextField) t).setText("");
+            }
+        });
+
 
         //adds Textfields
         for (int i = 1; i < 82; i++) {
