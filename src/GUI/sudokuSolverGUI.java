@@ -59,8 +59,6 @@ public class sudokuSolverGUI extends Application {
         solve.setFont(Font.font(20));
         clear.setFont(Font.font(20));
 
-        buttonsContainer.getChildren().addAll(solve, clear);
-
         //set button actions
         clear.setOnAction(x -> {
             for (Node t : sudukoGrid.getChildren()) {
@@ -68,6 +66,8 @@ public class sudokuSolverGUI extends Application {
             }
         });
 
+        //add buttons to container
+        buttonsContainer.getChildren().addAll(solve, clear);
 
         //adds Textfields
         for (int i = 1; i < 82; i++) {
