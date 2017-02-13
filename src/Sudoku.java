@@ -42,4 +42,27 @@ public class Sudoku {
         }
         return true;    //Inga dubbletter hittades, columnen OK!
     }
+    /**
+     * Returnerar true om alla rutor i ett "fält" innehåller unika värden.
+     * Returnerar false om det finns dubbletter.
+     * Parametrar x och y är en enskild rutas (OBS ej fälts) koordinater.
+     * */
+    public boolean fieldValid(int x, int y) {
+        List<Integer> values = new ArrayList<>();
+
+        int fieldModX = x / 3;  //Ger värdet 0, 1, eller 2, vilket motsvarar
+        int fieldModY = y / 3;  //fältets koordinater. (Tänk 0,1,2 / 3 = 0, osv...)
+
+        for (int i = 0; i < 3; i++) {                                       //Vi går igenom tre gånger tre rutor.
+            for (int j = 0; j < 3; j++) {
+                int value = field[i + 3 * fieldModX][j + 3 * fieldModY];    //Den exakta koordinaten bestäms av fieldMod.
+                if (values.contains(value))         //Om numret redan hittats i raden en gång ...
+                    return false;                   //... returnerar vi false.
+                else {
+                    values.add(value);              //Annars lägger vi till det i listan så länge.
+                }
+            }
+        }
+        return true;
+    }
 }
