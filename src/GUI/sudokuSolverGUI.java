@@ -17,6 +17,8 @@ import javafx.stage.Stage;
  */
 public class sudokuSolverGUI extends Application {
 
+    Sudoku.Sudoku sudoku = new Sudoku.Sudoku();
+
     TilePane sudukoGrid;
     VBox root;
     HBox buttonsContainer;
@@ -75,6 +77,20 @@ public class sudokuSolverGUI extends Application {
             temp.setPrefSize(50,40);
             temp.setAlignment(Pos.CENTER);
             temp.setFont(Font.font(20));
+
+            //TODO fixa x och y koordinater!
+            //Placerar inputen från detta textfält på motsvarande plats i sudokuobjektets matris.
+            temp.setOnKeyReleased(e -> {
+                int value;
+                try {
+                    value = Integer.parseInt(temp.getText());
+                } catch (NumberFormatException err) {
+                    //Tom ruta lästes, sätt in noll.
+                    value = 0;
+                }
+                sudoku.set(0, 0, value);
+                System.out.println(sudoku.get(0, 0));
+            });
 
             //styling
             int multOfNine = i%9;
