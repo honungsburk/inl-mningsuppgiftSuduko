@@ -51,5 +51,5 @@ public class keyPressedTextField implements KeyListener {
             textField.setStyle("-fx-control-inner-background: #FF0000; -fx-background-radius: 0");
         }
     }
-    }
 }
+
