@@ -1,6 +1,5 @@
 package Sudoku;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -12,34 +11,43 @@ import java.util.Set;
  * 0or ignoreras därför av rad och kolumn (etc) - metoder.
  */
 public class Sudoku {
-    int[][] field;
+    
 
-    public static void main(String[] args) {
-        Sudoku sudoku = new Sudoku();
-
-         System.out.println(sudoku.solve());
-        sudoku.print();
-    }
+    private int[][] sudokuMatrix;
+    private int[][] solvedSudoku;
 
     /** Main metod */
     public Sudoku() {
-        field = new int[9][9];
+        solvedSudoku = new int[9][9];
+        sudokuMatrix = new int[9][9];
+    }
+
+    public int[][] getSolvedSudoku() {
+        return copy(solvedSudoku);
+    }
+
+
+    /**
+     * Hämtar en siffra från en viss plats i Solved matrisen matrisen.
+     * */
+    public int getSolved(int x, int y) { //borde ändra är förvirrande att de är omkastade
+        return solvedSudoku[y][x];
     }
 
     /**
      * Hämtar en siffra från en viss plats i matrisen.
      * */
-    public int get(int x, int y) {
-        return field[y][x];
+    public int get(int x, int y) { //borde ändra är förvirrande att de är omkastade
+        return sudokuMatrix[y][x];
     }
 
     /**
      * Placerar en siffra på en viss plats i matrisen.
      * */
     public void set(int x, int y, int value) {
-        if (value < 0 || value > 9)
+        if (value < 1 || value > 9) //ändrade till 1 då man inte får stoppa in nollor
             throw new IllegalArgumentException("Ogiltig input. Endast tal mellan 0 och 9. (" + value + ")");
-        else field[y][x] = value;
+        else sudokuMatrix[y][x] = value;
     }
 
     /**
@@ -47,15 +55,15 @@ public class Sudoku {
      * @param y radens y koordinat.
      * @return true om raden är korrekt, annars false.
      */
-    public boolean rowValid(int y) {
+    public boolean rowValid(int y, int[][] matrix) {
         List<Integer> values = new ArrayList<>();   //lista för att jämföra
 
-        for (int x = 0; x < field[y].length; x++) {
-            if (field[y][x] != 0) {
-                if (values.contains(field[y][x]))   //Om numret redan hittats i raden en gång ...
+        for (int x = 0; x < matrix[y].length; x++) {
+            if (matrix[y][x] != 0) {
+                if (values.contains(matrix[y][x]))   //Om numret redan hittats i raden en gång ...
                     return false;                   //... returnerar vi false.
                 else {
-                    values.add(field[y][x]);        //Annars lägger vi till det i listan så länge.
+                    values.add(matrix[y][x]);        //Annars lägger vi till det i listan så länge.
                 }
             }
         }
@@ -67,15 +75,15 @@ public class Sudoku {
      * @param x columnens x-koordinat.
      * @return true om det inte finns några dubbletter, annars false.
      */
-    public boolean colValid(int x) {
+    public boolean colValid(int x, int[][] matrix) {
         List<Integer> values = new ArrayList<>();   //lista för att jämföra
 
-        for (int y = 0; y < field.length; y++) {
-            if (field[y][x] != 0) {
-                if (values.contains(field[y][x]))   //Om numret redan hittats i raden en gång ...
+        for (int y = 0; y < matrix.length; y++) {
+            if (matrix[y][x] != 0) {
+                if (values.contains(matrix[y][x]))   //Om numret redan hittats i raden en gång ...
                     return false;                   //... returnerar vi false.
                 else {
-                    values.add(field[y][x]);        //Annars lägger vi till det i listan så länge.
+                    values.add(matrix[y][x]);        //Annars lägger vi till det i listan så länge.
                 }
             }
         }
@@ -86,7 +94,7 @@ public class Sudoku {
      * Returnerar false om det finns dubbletter.
      * Parametrar x och y är en enskild rutas (OBS ej fälts) koordinater.
      * */
-    public boolean fieldValid(int x, int y) {
+    public boolean fieldValid(int x, int y, int[][] matrix) {
         Set<Integer> values = new HashSet<>();
 
         int fieldModX = x / 3;  //Ger värdet 0, 1, eller 2, vilket motsvarar
@@ -94,7 +102,7 @@ public class Sudoku {
 
         for (int i = 0; i < 3; i++) {                                       //Vi går igenom tre gånger tre rutor.
             for (int j = 0; j < 3; j++) {
-                int value = field[i + 3 * fieldModY][j + 3 * fieldModX];    //Den exakta koordinaten bestäms av fieldMod.
+                int value = matrix[i + 3 * fieldModY][j + 3 * fieldModX];    //Den exakta koordinaten bestäms av fieldMod.
                 if (value != 0) {
                     if (!values.add(value))         //Om numret redan hittats i raden en gång ...
                         return false;                   //... returnerar vi false.
@@ -107,8 +115,12 @@ public class Sudoku {
 
     public boolean solve(){
         userMatch();
-        int[][] matrix = field; // kanske inte kopierar som vi vill
-        return solve(0, matrix);
+        int[][] matrix = copy(sudokuMatrix);
+        print(matrix);
+        print(sudokuMatrix);
+        boolean result = solve(0, matrix);
+        solvedSudoku = matrix;
+        return result;
     }
 
     private boolean solve(int pos, int[][] matrix){
@@ -121,34 +133,76 @@ public class Sudoku {
             } else {
                 for (int i = 1; i <= 9; i++) {
                     matrix[y][x] = i;
-                    if (colValid(x) && rowValid(y) && fieldValid(x, y))
+                    if (colValid(x, matrix) && rowValid(y, matrix) && fieldValid(x, y, matrix))
                         if (solve(pos + 1, matrix)) return true;
                 }
                 matrix[y][x] = 0;
                 System.out.println();
-                print();
+                print(matrix);
                 return false;
             }
         } else return true;
 
     }
 
+    /**
+     * creates a matrix with booleans representing if a value is a user input value.
+     */
     private void userMatch(){
         userInput = new boolean[9][9];
 
         for(int y = 0; y < 9; y++) {
             for (int x = 0; x < 9; x++){
-                userInput[y][x] = field[y][x] != 0;
+                userInput[y][x] = sudokuMatrix[y][x] != 0;
             }
         }
     }
 
+    /**
+     * Makes a copy of a matrix
+     * @param original The matrix you wan't to copy.
+     * @return A copy of the original.
+     */
+    private int[][] copy(int[][] original){
+        int[][] temp = new int[9][9];
 
-    private void print(){
+        for (int y = 0; y < 9; y++){
+            for (int x = 0; x < 9; x++){
+                temp[y][x] = original[y][x];
+            }
+        }
+        return  temp;
+    }
+
+    /**
+     * Clears the sudokuMatrix.
+     */
+    public void clear(){
+        for (int y = 0; y < 9; y++){
+            for (int x = 0; x < 9; x++){
+                sudokuMatrix[y][x] = 0;
+            }
+        }
+    }
+
+    /**
+     *  clears a specific index in the sudokuMatrix.
+     * @param x the column
+     * @param y the row
+     */
+    public void clear(int x, int y){
+        sudokuMatrix[y][x] = 0;
+    }
+
+    /**
+     * Prints out a matrix
+     * @param matrix the matrix you wana print
+     */
+    private void print(int[][] matrix){
 
         for (int i = 0; i <9; i++){
             for (int j = 0; j < 9; j++){
-                System.out.print(field[i][j] + " ");
+                System.out.print(matrix[i][j] + " ");
             }
             System.out.println();
         }

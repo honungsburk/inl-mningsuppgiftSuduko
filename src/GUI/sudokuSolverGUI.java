@@ -66,6 +66,7 @@ public class sudokuSolverGUI extends Application {
             for (Node t : sudukoGrid.getChildren()) {
                 ((OneNumberTextField) t).setText("");
             }
+            sudoku.clear();
         });
 
         solve.setOnAction(x -> {
@@ -73,7 +74,7 @@ public class sudokuSolverGUI extends Application {
            sudoku.solve();
             int pos = 0;
             for(Node t: sudukoGrid.getChildren()){
-                ((OneNumberTextField) t).setText(sudoku.get(pos%9,pos/9) + "");
+                ((OneNumberTextField) t).setText(sudoku.getSolved(pos%9,pos/9) + "");
                 pos++;
             }
 
@@ -83,7 +84,7 @@ public class sudokuSolverGUI extends Application {
         buttonsContainer.getChildren().addAll(solve, clear);
 
         //adds Textfields
-        for (int i = 1; i < 82; i++) {
+        for (int i = 0; i < 81; i++) {
             OneNumberTextField temp = new OneNumberTextField();
             temp.setPrefSize(50,40);
             temp.setAlignment(Pos.CENTER);
@@ -106,12 +107,12 @@ public class sudokuSolverGUI extends Application {
             });
 
             //styling
-            int multOfNine = i%9;
-            if(i < 28 || i > 54) {
-                if (multOfNine < 4 || multOfNine > 6) {
+
+            if(i < 27 || i > 53) {
+                if (x < 3 || x > 5) {
                     temp.setStyle("-fx-control-inner-background: #ff7900; -fx-background-radius: 0");
                 }
-            } else if(multOfNine > 3 && multOfNine <7){
+            } else if(x > 2 && x <6){
                 temp.setStyle("-fx-control-inner-background: #ff7900; -fx-background-radius: 0");
             } else {
                 temp.setStyle("-fx-background-radius: 0");
