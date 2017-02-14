@@ -116,7 +116,6 @@ public class sudokuSolverGUI extends Application {
                 temp.setStyle(style);
             }
 
-            //TODO fixa x och y koordinater!
             //Placerar inputen från detta textfält på motsvarande plats i sudokuobjektets matris.
             String finalStyle = style;
             temp.setOnKeyReleased(e -> { //borde göras till sin egen klass så den kan anropas från clear och fixa färgerna
@@ -135,9 +134,6 @@ public class sudokuSolverGUI extends Application {
                     temp.setStyle("-fx-control-inner-background: #FF0000; -fx-background-radius: 0");
                 }
             });
-
-
-
             sudukoGrid.getChildren().add(temp);
         }
 

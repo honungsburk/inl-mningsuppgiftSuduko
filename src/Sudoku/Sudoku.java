@@ -11,7 +11,6 @@ import java.util.Set;
  * 0or ignoreras därför av rad och kolumn (etc) - metoder.
  */
 public class Sudoku {
-    
 
     private int[][] sudokuMatrix;
     private int[][] solvedSudoku;
@@ -90,11 +89,14 @@ public class Sudoku {
         }
         return true;    //Inga dubbletter hittades, columnen OK!
     }
+
     /**
-     * Returnerar true om alla rutor i ett "fält" innehåller unika värden.
-     * Returnerar false om det finns dubbletter.
-     * Parametrar x och y är en enskild rutas (OBS ej fälts) koordinater.
-     * */
+     * Kontrollerar att ett fält (3x3) rutor ej innehåller dubbletter.
+     * @param x en rutas (OBS: ej fälts) x-koordinat.
+     * @param y en rutas (OBS: ej fälts) y-koordinat.
+     * @param matrix matrisen vi vill kontrollera.
+     * @return true om fältet ej innehåller dubbletter, annars false.
+     */
     private boolean fieldValid(int x, int y, int[][] matrix) {
         Set<Integer> values = new HashSet<>();
 
@@ -113,7 +115,13 @@ public class Sudoku {
         return true;
     }
 
-
+    /**
+     * Checks if placing a value at a specific position would follow the rules.
+     * @param x The x position (column).
+     * @param y The y position (row).
+     * @param value The value the user wants to enter.
+     * @return true if the input is valid, otherwise false.
+     */
     public boolean userIndexedInputValid(int x, int y, int value){
         int[][] test = copy(sudokuMatrix);
         test[y][x] = value;
@@ -121,6 +129,10 @@ public class Sudoku {
     }
 
 
+    /**
+     * Solves the sudoku puzzle.
+     * @return true if the puzzle was solved, otherwise false.
+     */
     public boolean solve(){
         userInputs();
         int[][] matrix = copy(sudokuMatrix);
@@ -130,7 +142,6 @@ public class Sudoku {
         solvedSudoku = matrix;
         return result;
     }
-
     private boolean solve(int pos, int[][] matrix){
         int x = pos%9;
         int y = pos/9;
@@ -198,16 +209,15 @@ public class Sudoku {
      * @param x the column
      * @param y the row
      */
-    public void clear(int x, int y){
+    public void clearAt(int x, int y){
         sudokuMatrix[y][x] = 0;
     }
 
     /**
      * Prints out a matrix
-     * @param matrix the matrix you wana print
+     * @param matrix the matrix you want to print
      */
     private void print(int[][] matrix){
-
         for (int i = 0; i <9; i++){
             for (int j = 0; j < 9; j++){
                 System.out.print(matrix[i][j] + " ");
