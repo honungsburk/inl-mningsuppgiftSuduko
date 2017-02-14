@@ -1,6 +1,8 @@
 package GUI;
 
 import javafx.application.Application;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -35,6 +37,7 @@ public class sudokuSolverGUI extends Application {
         primaryStage.setTitle("SudokuSolver");
 
         root = new VBox();
+        scene = new Scene(root, 600, 600);
 
         //SudokuGrud
         sudukoGrid = new TilePane();
@@ -83,6 +86,11 @@ public class sudokuSolverGUI extends Application {
         //add buttons to container
         buttonsContainer.getChildren().addAll(solve, clear);
 
+        //create a property so the size of the buttons change //work in progress men tanken är å få saker å ting att rezisas automatiskt
+        IntegerProperty scaleFactorX = new SimpleIntegerProperty(1);
+        IntegerProperty scaleFactorY = new SimpleIntegerProperty(1);
+
+
         //adds Textfields
         for (int i = 0; i < 81; i++) {
             OneNumberTextField temp = new OneNumberTextField();
@@ -111,7 +119,7 @@ public class sudokuSolverGUI extends Application {
             //TODO fixa x och y koordinater!
             //Placerar inputen från detta textfält på motsvarande plats i sudokuobjektets matris.
             String finalStyle = style;
-            temp.setOnKeyReleased(e -> {
+            temp.setOnKeyReleased(e -> { //borde göras till sin egen klass så den kan anropas från clear och fixa färgerna
                 int value;
                 try {
                     value = Integer.parseInt(temp.getText());
@@ -135,7 +143,6 @@ public class sudokuSolverGUI extends Application {
 
         root.getChildren().addAll(sudukoGrid,buttonsContainer);
 
-        scene = new Scene(root, 600, 600);
 
         primaryStage.setScene(scene);
         primaryStage.show();
