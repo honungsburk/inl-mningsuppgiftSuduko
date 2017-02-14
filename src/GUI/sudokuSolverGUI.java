@@ -92,8 +92,25 @@ public class sudokuSolverGUI extends Application {
 
             int x = i % 9;
             int y = i / 9;
+
+            //styling
+            String style = "";
+            if(i < 27 || i > 53) {
+                if (x < 3 || x > 5) {
+                    style = "-fx-control-inner-background: #ff7900; -fx-background-radius: 0";
+                    temp.setStyle(style);
+                }
+            } else if(x > 2 && x <6){
+                style = "-fx-control-inner-background: #ff7900; -fx-background-radius: 0";
+                temp.setStyle(style);
+            } else {
+                style = "-fx-background-radius: 0";
+                temp.setStyle(style);
+            }
+
             //TODO fixa x och y koordinater!
             //Placerar inputen från detta textfält på motsvarande plats i sudokuobjektets matris.
+            String finalStyle = style;
             temp.setOnKeyReleased(e -> {
                 int value;
                 try {
@@ -102,21 +119,16 @@ public class sudokuSolverGUI extends Application {
                     //Tom ruta lästes, sätt in noll.
                     value = 0;
                 }
-                sudoku.set(x, y, value);
-                System.out.println(sudoku.get(x, y));
+                if(sudoku.userIndexedInputValid(x, y, value)) {
+                    sudoku.set(x, y, value);
+                    System.out.println(sudoku.get(x, y));
+                    temp.setStyle(finalStyle);
+                } else{
+                    temp.setStyle("-fx-control-inner-background: #FF0000; -fx-background-radius: 0");
+                }
             });
 
-            //styling
 
-            if(i < 27 || i > 53) {
-                if (x < 3 || x > 5) {
-                    temp.setStyle("-fx-control-inner-background: #ff7900; -fx-background-radius: 0");
-                }
-            } else if(x > 2 && x <6){
-                temp.setStyle("-fx-control-inner-background: #ff7900; -fx-background-radius: 0");
-            } else {
-                temp.setStyle("-fx-background-radius: 0");
-            }
 
             sudukoGrid.getChildren().add(temp);
         }

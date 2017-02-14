@@ -15,6 +15,7 @@ public class Sudoku {
 
     private int[][] sudokuMatrix;
     private int[][] solvedSudoku;
+    boolean[][] userInput;
 
     /** Main metod */
     public Sudoku() {
@@ -45,7 +46,7 @@ public class Sudoku {
      * Placerar en siffra på en viss plats i matrisen.
      * */
     public void set(int x, int y, int value) {
-        if (value < 1 || value > 9) //ändrade till 1 då man inte får stoppa in nollor
+        if (value < 0 || value > 9)
             throw new IllegalArgumentException("Ogiltig input. Endast tal mellan 0 och 9. (" + value + ")");
         else sudokuMatrix[y][x] = value;
     }
@@ -55,7 +56,7 @@ public class Sudoku {
      * @param y radens y koordinat.
      * @return true om raden är korrekt, annars false.
      */
-    public boolean rowValid(int y, int[][] matrix) {
+     private boolean rowValid(int y, int[][] matrix) {
         List<Integer> values = new ArrayList<>();   //lista för att jämföra
 
         for (int x = 0; x < matrix[y].length; x++) {
@@ -75,7 +76,7 @@ public class Sudoku {
      * @param x columnens x-koordinat.
      * @return true om det inte finns några dubbletter, annars false.
      */
-    public boolean colValid(int x, int[][] matrix) {
+    private boolean colValid(int x, int[][] matrix) {
         List<Integer> values = new ArrayList<>();   //lista för att jämföra
 
         for (int y = 0; y < matrix.length; y++) {
@@ -94,7 +95,7 @@ public class Sudoku {
      * Returnerar false om det finns dubbletter.
      * Parametrar x och y är en enskild rutas (OBS ej fälts) koordinater.
      * */
-    public boolean fieldValid(int x, int y, int[][] matrix) {
+    private boolean fieldValid(int x, int y, int[][] matrix) {
         Set<Integer> values = new HashSet<>();
 
         int fieldModX = x / 3;  //Ger värdet 0, 1, eller 2, vilket motsvarar
@@ -111,10 +112,17 @@ public class Sudoku {
         }
         return true;
     }
-    boolean[][] userInput;
+
+
+    public boolean userIndexedInputValid(int x, int y, int value){
+        int[][] test = copy(sudokuMatrix);
+        test[y][x] = value;
+        return fieldValid(x, y, test) && colValid(x, test) && rowValid(y, test);
+    }
+
 
     public boolean solve(){
-        userMatch();
+        userInputs();
         int[][] matrix = copy(sudokuMatrix);
         print(matrix);
         print(sudokuMatrix);
@@ -148,7 +156,7 @@ public class Sudoku {
     /**
      * creates a matrix with booleans representing if a value is a user input value.
      */
-    private void userMatch(){
+    private void userInputs(){
         userInput = new boolean[9][9];
 
         for(int y = 0; y < 9; y++) {
