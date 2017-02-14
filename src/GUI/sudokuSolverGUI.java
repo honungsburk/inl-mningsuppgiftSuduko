@@ -68,6 +68,17 @@ public class sudokuSolverGUI extends Application {
             }
         });
 
+        solve.setOnAction(x -> {
+
+           sudoku.solve();
+            int pos = 0;
+            for(Node t: sudukoGrid.getChildren()){
+                ((OneNumberTextField) t).setText(sudoku.get(pos%9,pos/9) + "");
+                pos++;
+            }
+
+        });
+
         //add buttons to container
         buttonsContainer.getChildren().addAll(solve, clear);
 
@@ -78,6 +89,8 @@ public class sudokuSolverGUI extends Application {
             temp.setAlignment(Pos.CENTER);
             temp.setFont(Font.font(20));
 
+            int x = i % 9;
+            int y = i / 9;
             //TODO fixa x och y koordinater!
             //Placerar inputen från detta textfält på motsvarande plats i sudokuobjektets matris.
             temp.setOnKeyReleased(e -> {
@@ -88,8 +101,8 @@ public class sudokuSolverGUI extends Application {
                     //Tom ruta lästes, sätt in noll.
                     value = 0;
                 }
-                sudoku.set(0, 0, value);
-                System.out.println(sudoku.get(0, 0));
+                sudoku.set(x, y, value);
+                System.out.println(sudoku.get(x, y));
             });
 
             //styling

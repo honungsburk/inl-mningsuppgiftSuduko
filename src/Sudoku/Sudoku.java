@@ -1,7 +1,10 @@
 package Sudoku;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Abstratktion av ett Sudokubräde
@@ -14,22 +17,8 @@ public class Sudoku {
     public static void main(String[] args) {
         Sudoku sudoku = new Sudoku();
 
-        sudoku.set(0, 0,1);
-        sudoku.set(1, 0,2);
-        sudoku.set(2, 0,3);
-        sudoku.set(0, 1,4);
-        sudoku.set(1, 1,5);
-        sudoku.set(2, 1,6);
-        sudoku.set(0, 2,7);
-        sudoku.set(1, 2,8);
-        sudoku.set(2, 2,9);
-
-        sudoku.set(2, 3,9);
-        sudoku.set(2, 4,9);
-
-        System.out.println(sudoku.rowValid(0));
-        System.out.println(sudoku.colValid(2));
-        System.out.println(sudoku.fieldValid(2, 3));    //<- fältchecken verkar inte funka helt 100%
+         System.out.println(sudoku.solve());
+        sudoku.print();
     }
 
     /** Main metod */
@@ -98,23 +87,70 @@ public class Sudoku {
      * Parametrar x och y är en enskild rutas (OBS ej fälts) koordinater.
      * */
     public boolean fieldValid(int x, int y) {
-        List<Integer> values = new ArrayList<>();
+        Set<Integer> values = new HashSet<>();
 
         int fieldModX = x / 3;  //Ger värdet 0, 1, eller 2, vilket motsvarar
         int fieldModY = y / 3;  //fältets koordinater. (Tänk 0,1,2 / 3 = 0, osv...)
 
         for (int i = 0; i < 3; i++) {                                       //Vi går igenom tre gånger tre rutor.
             for (int j = 0; j < 3; j++) {
-                int value = field[i + 3 * fieldModX][j + 3 * fieldModY];    //Den exakta koordinaten bestäms av fieldMod.
+                int value = field[i + 3 * fieldModY][j + 3 * fieldModX];    //Den exakta koordinaten bestäms av fieldMod.
                 if (value != 0) {
-                    if (values.contains(value))         //Om numret redan hittats i raden en gång ...
+                    if (!values.add(value))         //Om numret redan hittats i raden en gång ...
                         return false;                   //... returnerar vi false.
-                    else {
-                        values.add(value);              //Annars lägger vi till det i listan så länge.
-                    }
                 }
             }
         }
         return true;
+    }
+    boolean[][] userInput;
+
+    public boolean solve(){
+        userMatch();
+        int[][] matrix = field; // kanske inte kopierar som vi vill
+        return solve(0, matrix);
+    }
+
+    private boolean solve(int pos, int[][] matrix){
+        int x = pos%9;
+        int y = pos/9;
+
+        if(y < 9){
+            if(userInput[y][x]){
+                return solve(pos + 1, matrix);
+            } else {
+                for (int i = 1; i <= 9; i++) {
+                    matrix[y][x] = i;
+                    if (colValid(x) && rowValid(y) && fieldValid(x, y))
+                        if (solve(pos + 1, matrix)) return true;
+                }
+                matrix[y][x] = 0;
+                System.out.println();
+                print();
+                return false;
+            }
+        } else return true;
+
+    }
+
+    private void userMatch(){
+        userInput = new boolean[9][9];
+
+        for(int y = 0; y < 9; y++) {
+            for (int x = 0; x < 9; x++){
+                userInput[y][x] = field[y][x] != 0;
+            }
+        }
+    }
+
+
+    private void print(){
+
+        for (int i = 0; i <9; i++){
+            for (int j = 0; j < 9; j++){
+                System.out.print(field[i][j] + " ");
+            }
+            System.out.println();
+        }
     }
 }
