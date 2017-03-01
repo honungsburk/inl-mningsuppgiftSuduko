@@ -21,6 +21,10 @@ public class Sudoku {
         solvedSudoku = new int[9][9];
         sudokuMatrix = new int[9][9];
     }
+    public Sudoku(int[][] matrix) {
+        solvedSudoku = new int[9][9];
+        sudokuMatrix = matrix;
+    }
 
     public int[][] getSolvedSudoku() {
         return copy(solvedSudoku);
